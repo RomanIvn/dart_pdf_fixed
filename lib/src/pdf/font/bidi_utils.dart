@@ -46,7 +46,21 @@ String logicalToVisual(String input) {
     final endsWithNewLine = paragraph.separator == 10;
     final endIndex = paragraph.bidiText.length - (endsWithNewLine ? 1 : 0);
     final visual = String.fromCharCodes(paragraph.bidiText, 0, endIndex);
-    buffer.write(visual.split(' ').reversed.join(' '));
+    if (input == visual) {
+      List<String> tmp = visual.split(' ');
+      for (var part in tmp) {
+        var ending = RegExp(r'([^a-zA-Z0-9\u0590-\u05fe]*)$').stringMatch(part);
+        if (ending != null) {
+          var tmpPart = part.substring(0, part.length - ending.length);
+          tmp[tmp.indexOf(part)] = ending + tmpPart;
+        }
+      }
+      String out = tmp.join(' ');
+      //tmp = tmp.split(' ').reversed.join(' ');
+      buffer.write(out);
+    } else {
+      buffer.write(visual.split(' ').reversed.join(' '));
+    }
     if (endsWithNewLine) {
       buffer.writeln();
     }
